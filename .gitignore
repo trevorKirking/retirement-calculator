@@ -8,3 +8,4 @@ coverage/
 .local-dev-server.bat
 .local-dev-server.vbs
 .local-dev-server.*.log
+localhost-server.*.log
