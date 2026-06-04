@@ -1,0 +1,25 @@
+# generated: 2026-06-04
+# last_updated: 2026-06-04
+# project: Retirment calculator
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+#
+# STATUS DEFINITIONS:
+# Epic: backlog | in-progress | done
+# Story: backlog | ready-for-dev | in-progress | review | done
+# Retrospective: optional | done
+
+generated: 2026-06-04
+last_updated: 2026-06-04
+project: Retirment calculator
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  epic-1: done
+  1-1-retirement-dashboard-mvp-implementation: done
+  epic-1-retrospective: optional
+  epic-2: backlog
+  epic-2-retrospective: optional
