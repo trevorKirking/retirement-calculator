@@ -54,6 +54,7 @@ Needs:
 - Include adjustable assumptions such as return, inflation, contribution, retirement age, and Social Security.
 - Show both future dollars and inflation-adjusted today's dollars.
 - Make the tool usable live in a client conversation.
+- Show Innovest branding clearly at the top of the app experience.
 - Provide a simple printable or exportable meeting summary.
 
 ## 5. Non-Goals For MVP
@@ -305,6 +306,7 @@ MVP export requirements:
 - Print-friendly summary page.
 - Export as PDF if technically reasonable.
 - Include:
+  - Innovest logo/wordmark at the top of the summary.
   - Client name, optional.
   - Date.
   - Scenario names.
@@ -414,10 +416,18 @@ Controls:
 Visual style:
 
 - Clean, calm, and professional.
+- Innovest branded masthead at the top using the bronze inverted-triangle mark and INNOVEST wordmark.
 - High contrast numbers.
 - Clear chart colors.
 - Minimal clutter.
 - Large enough text for screen sharing or sitting across a desk.
+
+UI design contract:
+
+- Implementation agents must read `DESIGN.md` before making UI, component, color, spacing, chart, or print/export styling decisions.
+- The PRD controls product behavior and acceptance criteria. `DESIGN.md` controls visual identity and interaction polish.
+- Preserve the Innovest bronze/teal/lime color system from `DESIGN.md`; do not replace it with a generic dashboard palette.
+- If PRD requirements and `DESIGN.md` guidance appear to conflict, keep the PRD behavior and flag the design conflict before changing the design system.
 
 ## 11. Recommended MVP Screens
 
@@ -566,6 +576,7 @@ The MVP is complete when:
 - Summary cards update immediately when assumptions change.
 - Summary cards show depletion age or no-depletion status, years funded, and remaining balance at projection end.
 - A print-friendly summary can be generated.
+- Innovest branding is visible in the app masthead and print-friendly summary.
 - The app includes the required projection disclaimer.
 - The tool can be used in a live meeting without needing a spreadsheet.
 

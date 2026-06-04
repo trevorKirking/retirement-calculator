@@ -145,21 +145,28 @@
     .brand-lockup {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 18px;
       min-width: 0;
     }
 
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 8px;
-      display: grid;
-      place-items: center;
-      color: #fff;
-      background: var(--bronze);
-      font-weight: 800;
-      letter-spacing: .06em;
-      box-shadow: var(--shadow-sm);
+    .svg-sprite {
+      height: 0;
+      overflow: hidden;
+      position: absolute;
+      width: 0;
+    }
+
+    .innovest-logo {
+      color: var(--bronze);
+      display: block;
+      flex: 0 0 auto;
+      height: auto;
+      max-width: 100%;
+      width: clamp(190px, 28vw, 310px);
+    }
+
+    .brand-copy {
+      min-width: 0;
     }
 
     .brand-title {
@@ -551,6 +558,7 @@
       background: var(--paper);
       border-bottom: 1px solid var(--rule);
       display: flex;
+      gap: 12px;
       justify-content: space-between;
       padding: 10px 12px;
     }
@@ -581,11 +589,24 @@
 
     .mock-filename {
       color: var(--ink-soft);
+      flex: 0 1 190px;
       font-family: var(--mono);
       font-size: 11px;
       overflow: hidden;
+      text-align: right;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .mock-title-brand {
+      display: flex;
+      flex: 1 1 auto;
+      justify-content: center;
+      min-width: 120px;
+    }
+
+    .mock-title-brand .innovest-logo {
+      width: 132px;
     }
 
     .dashboard-mock {
@@ -1360,6 +1381,27 @@
       font-size: 18px;
     }
 
+    .print-brand {
+      align-items: center;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+    }
+
+    .print-brand .innovest-logo {
+      width: 132px;
+    }
+
+    .print-brand span {
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 800;
+      text-align: right;
+    }
+
     .disclaimer {
       color: var(--ink-soft);
       font-size: 11px;
@@ -1729,6 +1771,16 @@
         flex-direction: column;
       }
 
+      .brand-lockup {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .innovest-logo {
+        width: min(100%, 260px);
+      }
+
       .panel-head {
         display: block;
         width: 100%;
@@ -1741,9 +1793,9 @@
 
       .panel-head p,
       .hero-banner .lede {
-        max-width: calc(100vw - 32px);
+        max-width: 100%;
         overflow-wrap: anywhere;
-        width: calc(100vw - 32px);
+        width: auto;
       }
 
       .quick {
@@ -1868,17 +1920,27 @@
   </style>
 </head>
 <body>
+  <svg class="svg-sprite" aria-hidden="true" focusable="false">
+    <symbol id="innovest-lockup" viewBox="0 0 640 132">
+      <polygon points="0 0 124 0 62 132" fill="currentColor"></polygon>
+      <text x="168" y="84" fill="currentColor" font-family="Georgia, 'Times New Roman', serif" font-size="72" font-weight="400" textLength="452" lengthAdjust="spacing">INNOVEST</text>
+    </symbol>
+  </svg>
+
   <div class="portal-wrap">
     <header class="masthead">
       <div class="brand-lockup">
-        <div class="brand-mark" aria-hidden="true">RP</div>
-        <div>
+        <svg class="innovest-logo" role="img" aria-label="Innovest">
+          <use href="#innovest-lockup"></use>
+        </svg>
+        <div class="brand-copy">
           <p class="brand-title">Retirement Planning Dashboard</p>
-          <p class="brand-subtitle">Visual PRD and agent handoff artifact</p>
+          <p class="brand-subtitle">Innovest branded visual PRD and agent handoff artifact</p>
         </div>
       </div>
       <div class="meta">
         <strong>Artifact:</strong> Visual PRD<br>
+        <strong>Brand:</strong> Innovest<br>
         <strong>Mode:</strong> ProjectAura dev portal style<br>
         <strong>Data:</strong> Local-only static HTML
       </div>
@@ -1980,6 +2042,11 @@
         <div class="mock-shell">
           <div class="mock-titlebar">
             <div class="mock-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="mock-title-brand">
+              <svg class="innovest-logo" role="img" aria-label="Innovest">
+                <use href="#innovest-lockup"></use>
+              </svg>
+            </div>
             <div class="mock-filename">advisor-meeting-dashboard.tsx</div>
           </div>
           <div class="dashboard-mock">
@@ -2304,7 +2371,7 @@
           <pre id="tradeoff-chart">Use a proven chart library. Prefer Recharts for the MVP unless the app needs advanced annotations/export behavior, in which case use ECharts. The chart must support multiple scenario lines, retirement age marker, depletion marker, goal line, Future dollars vs Today's dollars toggle, and a tooltip with balance, annual spending, portfolio withdrawal, growth, and Social Security offset where relevant.</pre>
           <pre id="tradeoff-density">Use an advisor cockpit layout for MVP: compact input controls, clear chart, summary KPI cards, and a right-side scenario rail with Social Security and annual retirement spending controls. Keep the visual hierarchy calm and professional so a client can follow how long the portfolio lasts.</pre>
           <pre id="tradeoff-social">Treat Social Security as manual MVP input: include/exclude toggle, estimated monthly benefit, start age, and COLA assumption defaulting to inflation. Every chart tooltip, income card, depletion result, and export summary must clearly indicate whether Social Security offsets retirement spending.</pre>
-          <pre id="tradeoff-export">Build print-friendly export before PDF generation. Add a summary view with client name optional, date, chart, scenario names, key assumptions, annual retirement spending, depletion age or no-depletion status, remaining balance, results, and the required informational disclaimer. Use print CSS and ensure it works without manual formatting.</pre>
+          <pre id="tradeoff-export">Build print-friendly export before PDF generation. Add a summary view with the Innovest logo/wordmark at the top, client name optional, date, chart, scenario names, key assumptions, annual retirement spending, depletion age or no-depletion status, remaining balance, results, and the required informational disclaimer. Use print CSS and ensure it works without manual formatting.</pre>
         </div>
       </section>
 
@@ -2627,6 +2694,11 @@ Product intent:
 - The UI should feel like a professional meeting tool, not a consumer calculator or spreadsheet.
 - Prioritize speed, clarity, privacy, and explainability.
 
+Design contract:
+- Before making UI, component, color, spacing, chart, or print/export styling decisions, read DESIGN.md in this repository.
+- The PRD controls product behavior and acceptance criteria. DESIGN.md controls visual identity, UI hierarchy, component styling, and interaction polish.
+- Preserve the Innovest bronze/teal/lime color system, bronze inverted-triangle mark, and INNOVEST wordmark from DESIGN.md. Do not replace them with a generic dashboard palette.
+
 BMAD execution requirement:
 - Use the actual installed BMad Method BMM process in this repository before and during the build. Do not substitute a generic BMAD-style process.
 - Before coding, verify _bmad/, .agents/skills/, and _bmad/_config/manifest.yaml exist.
@@ -2641,6 +2713,7 @@ BMAD execution requirement:
 - If BMAD cannot be installed, invoked, or verified, stop and report the blocker.
 
 Recommended MVP design:
+- Use the Innovest logo/wordmark as the visible top-of-app brand signal. Preserve the bronze inverted-triangle mark plus INNOVEST wordmark from this Visual PRD in the app masthead and print/export summaries.
 - Advisor cockpit layout: left panel for assumptions/accounts, center area for projection chart and summary cards, right rail for scenarios, Social Security, annual retirement spending, and export/reset actions.
 - Chart is the centerpiece. It shows projected total retirement assets by age/year with multiple scenario lines, retirement age marker, depletion marker, optional goal line, and Future dollars vs Today's dollars toggle.
 - Summary cards show projected balance at retirement, inflation-adjusted balance, total contributions, estimated monthly retirement income, annual retirement spending, depletion age or no-depletion status, years funded, and remaining balance at projection end.
@@ -2658,7 +2731,8 @@ Calculation requirements:
 - Show depletion age/year when assets reach zero. If assets do not reach zero by the projection end age, show remaining balance and no-depletion status.
 - Keep the withdrawal-rate income estimate visually separate from the actual annual-spending depletion path.
 
-Privacy and export:
+Privacy, branding, and export:
+- Use the Innovest logo/wordmark at the top of the app and the print-friendly summary.
 - Do not require real client names.
 - Do not silently persist client data.
 - Add Clear Session / Reset.
@@ -2681,6 +2755,11 @@ Acceptance criteria:
             <div class="copy-panel-header"><span>Design-only prompt</span><button data-copy-target="design-only-prompt" type="button">Copy</button></div>
             <pre id="design-only-prompt">Design the retirement planning dashboard UI before implementing business logic.
 
+Design contract:
+- Read DESIGN.md before making UI, component, color, spacing, chart, or print/export styling decisions.
+- Preserve the Innovest bronze/teal/lime color system, bronze inverted-triangle mark, and INNOVEST wordmark from DESIGN.md.
+- Treat the PRD as the product behavior source of truth and DESIGN.md as the UI decision source of truth.
+
 BMAD execution requirement:
 - Use the installed BMad Method BMM process, not a generic BMAD-style pass.
 - Verify _bmad/ and .agents/skills/ exist.
@@ -2689,6 +2768,7 @@ BMAD execution requirement:
 - If BMAD cannot be installed, invoked, or verified, stop and report the blocker.
 
 Create a polished advisor cockpit mockup with:
+- Innovest branded masthead at the top using the bronze logo/wordmark, plus the same brand mark in the print-summary preview.
 - Left input panel for client assumptions and account cards.
 - Center chart area with summary KPI cards above it.
 - Right scenario rail with colored scenario rows, Social Security toggle, annual retirement spending controls, and export actions.
@@ -2744,7 +2824,12 @@ Deliver responsive React components or a detailed HTML prototype, whichever fits
           </div>
 
           <div class="print-page" aria-label="Print summary mockup">
-            <h3>Retirement Projection Summary</h3>
+            <div class="print-brand">
+              <svg class="innovest-logo" role="img" aria-label="Innovest">
+                <use href="#innovest-lockup"></use>
+              </svg>
+              <span>Retirement Projection Summary</span>
+            </div>
             <p style="color:var(--ink-soft);font-size:13px;">Prepared for client discussion - June 2026</p>
             <div class="print-grid">
               <div class="print-cell"><span>Base case</span><b>$1.74M</b></div>
@@ -3224,6 +3309,8 @@ BMAD execution requirement:
 - If BMAD cannot be installed, invoked, or verified, stop and report the blocker.
 
 Design direction:
+- Read DESIGN.md before making UI decisions. Preserve the Innovest bronze/teal/lime color system, bronze inverted-triangle mark, and INNOVEST wordmark from DESIGN.md.
+- Include the Innovest bronze inverted-triangle logo and INNOVEST wordmark at the top of the app, and repeat the brand in print-friendly export.
 - ${prompts.layout[layout]}
 - Visual tone should be ${tone}.
 
