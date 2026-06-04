@@ -597,7 +597,43 @@ The MVP is complete when:
 - Does the coworker need this as a local-only app, a web app, or something hosted for multiple advisors?
 - Should the first version include Monte Carlo simulation or keep deterministic projections only?
 
-## 18. Recommended MVP Build Order
+## 18. BMAD Execution Requirement
+
+The implementation agent must use the actual BMad Method BMM process in this repository before and during the build. BMAD is not a loose inspiration layer for this project; it is the required operating process for turning this PRD into implementation artifacts, stories, code, tests, and review outcomes.
+
+BMAD has been installed for Codex in this repository. The expected local artifacts are:
+
+- `_bmad/`
+- `.agents/skills/`
+- `_bmad/_config/manifest.yaml`
+
+If those artifacts are missing in a future checkout, install BMAD before coding:
+
+```powershell
+npx.cmd bmad-method install --directory . --modules bmm --tools codex --yes
+```
+
+If `codex` is rejected as a tool id, run BMAD's tool-list command, choose the listed Codex tool id, and repeat the install. Do not proceed as if BMAD was used unless the BMAD artifacts and generated skills are present.
+
+Required BMAD workflow sequence:
+
+1. Orientation and Analysis: start with `bmad-help`. If BMAD identifies upstream analysis gaps, run the recommended analysis workflow before changing implementation scope.
+2. Planning: validate this PRD with `bmad-validate-prd`. If material changes are needed, use `bmad-edit-prd` and rerun `bmad-validate-prd`. If a future agent is recreating the PRD from scratch, use `bmad-create-prd`.
+3. UX Planning: run `bmad-create-ux-design` because this dashboard is a UI-heavy advisor meeting tool.
+4. Solutioning: run `bmad-create-architecture`, then `bmad-create-epics-and-stories`, then `bmad-check-implementation-readiness`.
+5. Implementation: run `bmad-sprint-planning`, then build story by story with `bmad-create-story`, story validation, `bmad-dev-story`, and `bmad-code-review`.
+
+During implementation, if BMAD recommends a PRD, UX, architecture, epic/story, test, or code change, the agent must record the recommendation, apply accepted changes to the correct artifact, and rerun the relevant BMAD validation, readiness, or code-review workflow before continuing.
+
+Failure rule:
+
+- If BMAD cannot be installed, invoked, or verified, stop and report the blocker.
+- Do not substitute a generic "BMAD-style" process for the actual installed BMAD workflows.
+- Do not start feature implementation until BMAD planning and implementation-readiness outputs have no unresolved blocking concerns.
+
+This requirement maps the project to the official BMAD phases: Analysis, Planning, Solutioning, and Implementation.
+
+## 19. Recommended MVP Build Order
 
 1. Build the calculation engine for accumulation and post-retirement depletion.
 2. Build account input and aggregation.

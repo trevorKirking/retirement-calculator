@@ -2311,10 +2311,10 @@
       <section class="panel" id="panel-bmad-review" data-panel="bmad-review" aria-labelledby="bmad-review-title">
         <div class="panel-head">
           <div>
-            <div class="section-eyebrow">BMad persona review board</div>
-            <h2 id="bmad-review-title">Use the BMad agents to pressure-test the PRD before build.</h2>
+            <div class="section-eyebrow">BMad execution contract</div>
+            <h2 id="bmad-review-title">Use installed BMAD before implementation, then keep using it story by story.</h2>
           </div>
-          <p>These recommendations translate the official BMad named-agent roles into a focused review pass for this retirement planning dashboard.</p>
+          <p>BMAD BMM is installed in this repo. These persona recommendations support the required workflow; they do not replace it.</p>
         </div>
 
         <div class="kpi-strip" aria-label="BMad phase coverage">
@@ -2491,14 +2491,26 @@
         <div class="grid-2" style="margin-top:14px;">
           <article class="portal-card teal">
             <div class="section-eyebrow">How to use this board</div>
-            <h3>Run the recommendations before coding.</h3>
-            <p>Use each persona prompt as a focused review pass. Capture accepted changes with the annotation tool, then paste the accumulated annotation prompt into the implementation agent.</p>
+            <h3>Run BMAD workflows before coding.</h3>
+            <p>Start with the installed <strong>bmad-help</strong> skill, validate or update the PRD, create UX and architecture artifacts, create epics and stories, then pass implementation readiness before coding.</p>
+            <p>Use each persona prompt as a focused review pass inside that process. Capture accepted changes with the annotation tool, apply them to the right artifact, and rerun the relevant BMAD check before continuing.</p>
             <p class="bmad-source-note">BMad source mapping: <a href="https://docs.bmad-method.org/reference/agents/">Agents reference</a>, <a href="https://docs.bmad-method.org/explanation/named-agents/">Named Agents</a>, and <a href="https://docs.bmad-method.org/tutorials/getting-started/">Getting Started workflow</a>.</p>
           </article>
 
           <div class="copy-panel">
             <div class="copy-panel-header"><span>Copy all persona prompts</span><button data-copy-target="bmad-all-persona-prompts" type="button">Copy All</button></div>
-            <pre id="bmad-all-persona-prompts">Use the BMad Method personas as a structured review board for the Retirement Planning Dashboard Visual PRD. Review the PRD as six passes, preserving the current advisor-cockpit direction, annual-spending depletion model, session-only privacy posture, print-first export, and annotation-based coding-agent handoff.
+            <pre id="bmad-all-persona-prompts">Actual BMAD execution requirement for the Retirement Planning Dashboard Visual PRD.
+
+Before coding:
+- Verify _bmad/ and .agents/skills/ exist in this repository.
+- If BMAD is missing, run: npx.cmd bmad-method install --directory . --modules bmm --tools codex --yes
+- Start with bmad-help.
+- Run bmad-validate-prd, then bmad-edit-prd and bmad-validate-prd again if material PRD changes are recommended.
+- Run bmad-create-ux-design, bmad-create-architecture, bmad-create-epics-and-stories, and bmad-check-implementation-readiness.
+- During implementation, run bmad-sprint-planning, then use bmad-create-story, story validation, bmad-dev-story, and bmad-code-review for each story.
+- If BMAD cannot be installed, invoked, or verified, stop and report the blocker. Do not substitute a generic BMAD-style process.
+
+Use the BMad Method personas below as structured review passes inside that real workflow. Preserve the current advisor-cockpit direction, annual-spending depletion model, session-only privacy posture, print-first export, and annotation-based coding-agent handoff.
 
 Mary, Analyst - Analysis:
 Sharpen the product foundation. Review advisor/client problem framing, market assumptions, buyer/user distinction, why this is better than a spreadsheet, and what unknowns should be called out before implementation. Recommend concrete PRD edits only.
@@ -2521,12 +2533,12 @@ Improve build readiness. Review story slicing, test fixture needs, implementatio
         </div>
 
         <div class="hidden-prompts">
-          <pre id="bmad-mary-prompt">Act as Mary, the BMad Business Analyst, and review the Retirement Planning Dashboard Visual PRD. Focus on advisor/client problem framing, market assumptions, buyer/user distinction, product brief gaps, and why this tool is better than spreadsheet work in live meetings. Return concrete PRD edits only: problem statement, target audience clarification, assumptions/unknowns, and any missing research questions.</pre>
-          <pre id="bmad-paige-prompt">Act as Paige, the BMad Technical Writer, and review the Retirement Planning Dashboard Visual PRD. Focus on glossary needs, terminology consistency, export wording, disclaimer placement, implementation handoff clarity, and whether visible UI language matches copyable prompts. Return concrete wording and documentation edits only.</pre>
-          <pre id="bmad-john-prompt">Act as John, the BMad Product Manager, and review the Retirement Planning Dashboard Visual PRD. Focus on MVP scope, non-goals, acceptance criteria, success metrics, epic breakdown, and measurable annual-spending depletion requirements. Return concrete PRD edits that make the work ready for epic and story creation.</pre>
-          <pre id="bmad-sally-prompt">Act as Sally, the BMad UX Designer, and review the Retirement Planning Dashboard Visual PRD. Focus on advisor meeting flow, client readability, chart comprehension, empty states, validation states, loading/recalculation states, accessibility, and screen-share ergonomics. Return concrete UX spec additions and visual hierarchy recommendations.</pre>
-          <pre id="bmad-winston-prompt">Act as Winston, the BMad System Architect, and review the Retirement Planning Dashboard Visual PRD. Focus on projection-engine boundaries, scenario state model, chart view models, print-summary data, privacy guarantees, rounding, inflation timing, Social Security offset, and depletion edge cases. Return concrete architecture notes and implementation-readiness risks.</pre>
-          <pre id="bmad-amelia-prompt">Act as Amelia, the BMad Senior Engineer, and review the Retirement Planning Dashboard Visual PRD. Focus on story slicing, deterministic projection fixtures, unit test coverage, implementation order, code-review checkpoints, failure modes, and how to keep the MVP small. Return concrete build-sequence and test recommendations.</pre>
+          <pre id="bmad-mary-prompt">Use this pass inside the installed BMAD workflow. First verify _bmad/ and .agents/skills/ exist, start with bmad-help, and stop if BMAD cannot run. Act as Mary, the BMad Business Analyst, and review the Retirement Planning Dashboard Visual PRD. Focus on advisor/client problem framing, market assumptions, buyer/user distinction, product brief gaps, and why this tool is better than spreadsheet work in live meetings. Return concrete PRD edits only: problem statement, target audience clarification, assumptions/unknowns, and any missing research questions.</pre>
+          <pre id="bmad-paige-prompt">Use this pass inside the installed BMAD workflow. First verify _bmad/ and .agents/skills/ exist, start with bmad-help, and stop if BMAD cannot run. Act as Paige, the BMad Technical Writer, and review the Retirement Planning Dashboard Visual PRD. Focus on glossary needs, terminology consistency, export wording, disclaimer placement, implementation handoff clarity, and whether visible UI language matches copyable prompts. Return concrete wording and documentation edits only.</pre>
+          <pre id="bmad-john-prompt">Use this pass inside the installed BMAD workflow. First verify _bmad/ and .agents/skills/ exist, start with bmad-help, and stop if BMAD cannot run. Act as John, the BMad Product Manager, and review the Retirement Planning Dashboard Visual PRD. Focus on MVP scope, non-goals, acceptance criteria, success metrics, epic breakdown, and measurable annual-spending depletion requirements. Return concrete PRD edits that make the work ready for epic and story creation.</pre>
+          <pre id="bmad-sally-prompt">Use this pass inside the installed BMAD workflow. First verify _bmad/ and .agents/skills/ exist, start with bmad-help, and stop if BMAD cannot run. Act as Sally, the BMad UX Designer, and review the Retirement Planning Dashboard Visual PRD. Focus on advisor meeting flow, client readability, chart comprehension, empty states, validation states, loading/recalculation states, accessibility, and screen-share ergonomics. Return concrete UX spec additions and visual hierarchy recommendations.</pre>
+          <pre id="bmad-winston-prompt">Use this pass inside the installed BMAD workflow. First verify _bmad/ and .agents/skills/ exist, start with bmad-help, and stop if BMAD cannot run. Act as Winston, the BMad System Architect, and review the Retirement Planning Dashboard Visual PRD. Focus on projection-engine boundaries, scenario state model, chart view models, print-summary data, privacy guarantees, rounding, inflation timing, Social Security offset, and depletion edge cases. Return concrete architecture notes and implementation-readiness risks.</pre>
+          <pre id="bmad-amelia-prompt">Use this pass inside the installed BMAD workflow. First verify _bmad/ and .agents/skills/ exist, start with bmad-help, and stop if BMAD cannot run. Act as Amelia, the BMad Senior Engineer, and review the Retirement Planning Dashboard Visual PRD. Focus on story slicing, deterministic projection fixtures, unit test coverage, implementation order, code-review checkpoints, failure modes, and how to keep the MVP small. Return concrete build-sequence and test recommendations.</pre>
         </div>
       </section>
 
@@ -2534,9 +2546,22 @@ Improve build readiness. Review story slicing, test fixture needs, implementatio
         <div class="panel-head">
           <div>
             <div class="section-eyebrow">Copy-paste agent brief</div>
-            <h2 id="agent-brief-title">Generate an implementation prompt from the chosen tradeoffs.</h2>
+            <h2 id="agent-brief-title">Generate an implementation prompt with the BMAD execution contract.</h2>
           </div>
-          <p>The defaults match the recommended MVP: advisor cockpit, session-only data, Recharts, and accumulation plus post-retirement depletion.</p>
+          <p>The defaults match the recommended MVP, and every generated prompt now requires actual installed BMAD workflows before and during coding.</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:14px;">
+          <article class="portal-card teal">
+            <div class="section-eyebrow">Actual BMAD required</div>
+            <h3>Use the installed BMM process.</h3>
+            <p>BMAD is installed in <strong>_bmad/</strong> with Codex skills in <strong>.agents/skills/</strong>. The implementation agent must start with <strong>bmad-help</strong>, then run PRD validation, UX, architecture, epics/stories, readiness, sprint planning, story implementation, and code review.</p>
+          </article>
+          <article class="portal-card">
+            <div class="section-eyebrow">Failure rule</div>
+            <h3>Stop if BMAD cannot run.</h3>
+            <p>If BMAD cannot be installed, invoked, or verified, the agent must report the blocker instead of pretending a generic BMAD-style process was followed. Accepted BMAD recommendations must be applied to the right artifact and rechecked before continuing.</p>
+          </article>
         </div>
 
         <div class="prompt-lab">
@@ -2602,6 +2627,19 @@ Product intent:
 - The UI should feel like a professional meeting tool, not a consumer calculator or spreadsheet.
 - Prioritize speed, clarity, privacy, and explainability.
 
+BMAD execution requirement:
+- Use the actual installed BMad Method BMM process in this repository before and during the build. Do not substitute a generic BMAD-style process.
+- Before coding, verify _bmad/, .agents/skills/, and _bmad/_config/manifest.yaml exist.
+- If BMAD is missing, run: npx.cmd bmad-method install --directory . --modules bmm --tools codex --yes
+- If the codex tool id is rejected, run BMAD's tool-list command, choose the listed Codex tool id, and repeat the install.
+- Start with bmad-help.
+- Validate or update this PRD with bmad-validate-prd and bmad-edit-prd. If recreating the PRD from scratch, use bmad-create-prd.
+- Run bmad-create-ux-design for the UI specification.
+- Run bmad-create-architecture, bmad-create-epics-and-stories, and bmad-check-implementation-readiness before feature implementation.
+- During implementation, run bmad-sprint-planning, then work story by story with bmad-create-story, story validation, bmad-dev-story, and bmad-code-review.
+- If BMAD recommends a PRD, UX, architecture, epic/story, test, or code change, record it, apply accepted changes to the correct artifact, and rerun the relevant BMAD validation, readiness, or code-review workflow before continuing.
+- If BMAD cannot be installed, invoked, or verified, stop and report the blocker.
+
 Recommended MVP design:
 - Advisor cockpit layout: left panel for assumptions/accounts, center area for projection chart and summary cards, right rail for scenarios, Social Security, annual retirement spending, and export/reset actions.
 - Chart is the centerpiece. It shows projected total retirement assets by age/year with multiple scenario lines, retirement age marker, depletion marker, optional goal line, and Future dollars vs Today's dollars toggle.
@@ -2642,6 +2680,13 @@ Acceptance criteria:
           <div class="copy-panel">
             <div class="copy-panel-header"><span>Design-only prompt</span><button data-copy-target="design-only-prompt" type="button">Copy</button></div>
             <pre id="design-only-prompt">Design the retirement planning dashboard UI before implementing business logic.
+
+BMAD execution requirement:
+- Use the installed BMad Method BMM process, not a generic BMAD-style pass.
+- Verify _bmad/ and .agents/skills/ exist.
+- Start with bmad-help, then run bmad-create-ux-design for the UX specification.
+- If UX work changes PRD scope, record the recommendation, apply accepted PRD changes with bmad-edit-prd, and rerun bmad-validate-prd before continuing.
+- If BMAD cannot be installed, invoked, or verified, stop and report the blocker.
 
 Create a polished advisor cockpit mockup with:
 - Left input panel for client assumptions and account cards.
@@ -3164,6 +3209,19 @@ Deliver responsive React components or a detailed HTML prototype, whichever fits
       const extra = getEl("extra-choice").value.trim();
 
       const prompt = `Build the Retirement Planning Dashboard MVP.
+
+BMAD execution requirement:
+- Use the actual installed BMad Method BMM process in this repository before and during the build. Do not substitute a generic BMAD-style process.
+- Before coding, verify _bmad/, .agents/skills/, and _bmad/_config/manifest.yaml exist.
+- If BMAD is missing, run: npx.cmd bmad-method install --directory . --modules bmm --tools codex --yes
+- If the codex tool id is rejected, run BMAD's tool-list command, choose the listed Codex tool id, and repeat the install.
+- Start with bmad-help.
+- Validate or update this PRD with bmad-validate-prd and bmad-edit-prd. If recreating the PRD from scratch, use bmad-create-prd.
+- Run bmad-create-ux-design for the UI specification.
+- Run bmad-create-architecture, bmad-create-epics-and-stories, and bmad-check-implementation-readiness before feature implementation.
+- During implementation, run bmad-sprint-planning, then work story by story with bmad-create-story, story validation, bmad-dev-story, and bmad-code-review.
+- If BMAD recommends a PRD, UX, architecture, epic/story, test, or code change, record it, apply accepted changes to the correct artifact, and rerun the relevant BMAD validation, readiness, or code-review workflow before continuing.
+- If BMAD cannot be installed, invoked, or verified, stop and report the blocker.
 
 Design direction:
 - ${prompts.layout[layout]}
