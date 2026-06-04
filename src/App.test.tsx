@@ -7,12 +7,16 @@ describe("Retirement dashboard app", () => {
     render(<App />);
 
     expect(screen.getAllByLabelText("Innovest")[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/version 2/i)[0]).toBeInTheDocument();
     expect(screen.getAllByRole("heading", { name: /retirement projection/i })[0]).toBeInTheDocument();
     expect(screen.getAllByLabelText(/projection chart/i)[0]).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /print summary/i })[0]).toBeInTheDocument();
     expect(screen.getAllByText(/Base Case/i)[0]).toBeInTheDocument();
     expect(screen.getAllByText(/Increase Contributions/i)[0]).toBeInTheDocument();
     expect(screen.getAllByText(/Retire Later/i)[0]).toBeInTheDocument();
+    expect(screen.getByLabelText("Retirement cash flow controls")).toBeInTheDocument();
+    expect(screen.getAllByText(/withdrawal-rate income/i)[0]).toBeInTheDocument();
+    expect(screen.getByText(/contributions stop at age 67/i)).toBeInTheDocument();
   });
 
   it("updates mode and scenario labels from user interaction", async () => {

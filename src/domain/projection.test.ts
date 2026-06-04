@@ -65,6 +65,59 @@ describe("projection engine", () => {
     expect(firstRetiredPoint?.totalBalance).toBeCloseTo(100000, 0);
   });
 
+  it("stops regular contributions after retirement age", () => {
+    const result = projectScenario(
+      scenarioWith({
+        currentAge: 64,
+        retirementAge: 65,
+        projectionEndAge: 70,
+        retirementAnnualSpending: 0,
+        socialSecurityEnabled: false,
+        accounts: [
+          {
+            ...defaultScenarios[0].accounts[0],
+            currentBalance: 100000,
+            monthlyContribution: 1000,
+            annualReturn: 0,
+            employerMatchEnabled: false
+          }
+        ]
+      })
+    );
+
+    const retirementPoint = result.points.find((point) => point.age >= 65);
+    const finalPoint = result.points[result.points.length - 1];
+
+    expect(retirementPoint?.totalContributions).toBeGreaterThan(0);
+    expect(finalPoint.totalContributions).toBe(retirementPoint?.totalContributions);
+  });
+
+  it("keeps withdrawal-rate income estimate separate from spending depletion", () => {
+    const baseline = scenarioWith({
+      currentAge: 64,
+      retirementAge: 65,
+      projectionEndAge: 67,
+      retirementAnnualSpending: 60000,
+      withdrawalRate: 3,
+      socialSecurityEnabled: false,
+      accounts: [
+        {
+          ...defaultScenarios[0].accounts[0],
+          currentBalance: 120000,
+          monthlyContribution: 0,
+          annualReturn: 0,
+          employerMatchEnabled: false
+        }
+      ]
+    });
+    const lowerRate = projectScenario(baseline);
+    const higherRate = projectScenario({ ...baseline, withdrawalRate: 6 });
+
+    expect(higherRate.summary.estimatedMonthlyIncome).toBeGreaterThan(lowerRate.summary.estimatedMonthlyIncome);
+    expect(higherRate.summary.depletionAge).toBe(lowerRate.summary.depletionAge);
+    expect(higherRate.summary.remainingBalanceAtEnd).toBe(lowerRate.summary.remainingBalanceAtEnd);
+  });
+
   it("calculates today's dollars below future dollars when inflation is positive", () => {
     const result = projectScenario(scenarioWith({ inflationRate: 3 }));
     const finalPoint = result.points[result.points.length - 1];

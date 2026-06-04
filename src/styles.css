@@ -32,10 +32,8 @@ body {
   margin: 0;
   min-width: 320px;
   background:
-    linear-gradient(90deg, rgba(175, 104, 40, 0.04) 1px, transparent 1px),
-    linear-gradient(rgba(0, 137, 145, 0.04) 1px, transparent 1px),
+    linear-gradient(180deg, #f8f4ec 0, #ffffff 310px),
     var(--bg);
-  background-size: 34px 34px;
 }
 
 button,
@@ -53,10 +51,17 @@ button:disabled {
   opacity: 0.45;
 }
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(0, 137, 145, 0.28);
+  outline-offset: 2px;
+}
+
 .app-shell {
   max-width: 1440px;
   margin: 0 auto;
-  padding: 18px;
+  padding: 20px;
 }
 
 .masthead,
@@ -76,6 +81,7 @@ button:disabled {
   justify-content: space-between;
   gap: 18px;
   padding: 16px;
+  border-color: rgba(175, 104, 40, 0.24);
 }
 
 .brand-lockup {
@@ -152,9 +158,10 @@ button:disabled {
 
 .primary-button {
   padding: 0 14px;
-  background: var(--bronze);
+  background: linear-gradient(180deg, var(--bronze), var(--bronze-d));
   border-color: var(--bronze-d);
   color: #fff;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.24) inset, var(--shadow-sm);
 }
 
 .secondary-button {
@@ -177,11 +184,14 @@ button:disabled {
 
 .hero-strip {
   margin: 16px 0;
-  padding: 18px;
+  padding: 20px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 280px;
   gap: 18px;
   border-top: 4px solid var(--bronze);
+  background:
+    linear-gradient(90deg, rgba(175, 104, 40, 0.1), transparent 38%),
+    rgba(255, 255, 255, 0.96);
 }
 
 .eyebrow {
@@ -281,6 +291,12 @@ h2 {
   font-weight: 800;
 }
 
+.field small {
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .field input,
 .field select,
 .account-head input,
@@ -367,6 +383,63 @@ h2 {
   transform: translateX(18px);
 }
 
+.cashflow-group {
+  margin: 4px 0 10px;
+  border: 1px solid rgba(175, 104, 40, 0.22);
+  border-radius: 8px;
+  background: var(--paper);
+  padding: 12px;
+}
+
+.cashflow-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cashflow-head h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.cashflow-head span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 8px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--bronze-d);
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.cashflow-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.model-control-card {
+  border: 1px solid var(--rule-soft);
+  border-top: 3px solid var(--bronze);
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px;
+}
+
+.model-control-card.estimate {
+  border-top-color: var(--teal);
+}
+
+.model-control-card .field {
+  margin: 0;
+}
+
 .validation {
   border: 1px solid var(--danger);
   border-radius: 6px;
@@ -409,6 +482,9 @@ h2 {
   min-height: 112px;
   padding: 14px;
   border-top: 4px solid var(--bronze);
+  background:
+    linear-gradient(180deg, rgba(252, 250, 244, 0.76), rgba(255, 255, 255, 0.96)),
+    #fff;
 }
 
 .kpi-card.teal {
@@ -480,13 +556,28 @@ h2 {
 
 .chart-tooltip {
   display: grid;
-  gap: 5px;
-  min-width: 190px;
+  gap: 8px;
+  min-width: 260px;
   border: 1px solid var(--rule);
   border-radius: 8px;
   background: #fff;
   padding: 10px;
   box-shadow: var(--shadow-md);
+}
+
+.tooltip-scenario {
+  display: grid;
+  gap: 2px;
+}
+
+.tooltip-scenario span {
+  font-weight: 900;
+}
+
+.tooltip-scenario small {
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .chart-note,
@@ -498,7 +589,7 @@ h2 {
 
 .detail-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
   gap: 10px;
 }
 
@@ -661,6 +752,13 @@ h2 {
     flex-direction: column;
   }
 
+  .brand-lockup {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
   .masthead-actions,
   .mode-toggle {
     width: 100%;
@@ -681,6 +779,19 @@ h2 {
 
   .two-col {
     grid-template-columns: 1fr;
+  }
+
+  .cashflow-head,
+  .cashflow-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .cashflow-head {
+    display: grid;
+  }
+
+  .cashflow-head span {
+    white-space: normal;
   }
 
   .account-head {

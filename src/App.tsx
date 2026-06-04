@@ -63,7 +63,7 @@ function BrandLockup({ compact = false }: { compact?: boolean }) {
       {!compact && (
         <div>
           <p className="brand-kicker">Retirement Planning Dashboard</p>
-          <p className="brand-subtitle">Advisor meeting cockpit</p>
+          <p className="brand-subtitle">Advisor meeting cockpit - Version 2</p>
         </div>
       )}
     </div>
@@ -78,7 +78,8 @@ function NumberField({
   max,
   step = 1,
   prefix,
-  suffix
+  suffix,
+  description
 }: {
   label: string;
   value: number;
@@ -88,6 +89,7 @@ function NumberField({
   step?: number;
   prefix?: string;
   suffix?: string;
+  description?: string;
 }) {
   return (
     <label className="field">
@@ -104,6 +106,7 @@ function NumberField({
         />
         {suffix && <b>{suffix}</b>}
       </div>
+      {description && <small>{description}</small>}
     </label>
   );
 }
@@ -126,17 +129,30 @@ function Toggle({
   );
 }
 
+type ChartRow = Record<string, number>;
+
 function mergeChartRows(results: ProjectionResult[], mode: DollarMode) {
-  const rows = new Map<number, Record<string, number>>();
+  const rows = new Map<number, ChartRow>();
   for (const result of results.filter((item) => item.enabled)) {
     for (const point of result.points) {
       const row = rows.get(point.age) ?? { age: point.age, year: point.year };
       row[result.scenarioId] = mode === "today" ? point.inflationAdjustedBalance : point.totalBalance;
+      row[`${result.scenarioId}AnnualSpending`] = point.annualSpending;
+      row[`${result.scenarioId}PortfolioWithdrawal`] = point.portfolioWithdrawal;
+      row[`${result.scenarioId}SocialSecurity`] = point.socialSecurityIncome;
       rows.set(point.age, row);
     }
   }
   return Array.from(rows.values()).sort((a, b) => a.age - b.age);
 }
+
+type ChartPayloadEntry = {
+  name: string;
+  value: number;
+  color?: string;
+  dataKey?: string | number;
+  payload?: ChartRow;
+};
 
 function ChartTooltip({
   active,
@@ -144,18 +160,34 @@ function ChartTooltip({
   label
 }: {
   active?: boolean;
-  payload?: Array<{ name: string; value: number; color: string }>;
+  payload?: ChartPayloadEntry[];
   label?: number;
 }) {
   if (!active || !payload?.length) return null;
   return (
     <div className="chart-tooltip">
       <strong>Age {label}</strong>
-      {payload.map((entry) => (
-        <span key={entry.name} style={{ color: entry.color }}>
-          {entry.name}: {formatCurrency(entry.value)}
-        </span>
-      ))}
+      {payload.map((entry) => {
+        const dataKey = String(entry.dataKey ?? "");
+        const annualSpending = Number(entry.payload?.[`${dataKey}AnnualSpending`] ?? 0);
+        const portfolioWithdrawal = Number(entry.payload?.[`${dataKey}PortfolioWithdrawal`] ?? 0);
+        const socialSecurity = Number(entry.payload?.[`${dataKey}SocialSecurity`] ?? 0);
+        const hasRetirementCashFlow = annualSpending > 0 || portfolioWithdrawal > 0 || socialSecurity > 0;
+
+        return (
+          <div className="tooltip-scenario" key={`${entry.name}-${dataKey}`}>
+            <span style={{ color: entry.color ?? brandColors.ink }}>
+              {entry.name}: {formatCurrency(entry.value)}
+            </span>
+            {hasRetirementCashFlow && (
+              <small>
+                Spend {formatCurrency(annualSpending)} | Draw {formatCurrency(portfolioWithdrawal)} | SS{" "}
+                {formatCurrency(socialSecurity)}
+              </small>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -243,10 +275,12 @@ function ProjectionChart({
 
 function SummaryCards({
   projection,
-  bestScenario
+  bestScenario,
+  scenario
 }: {
   projection: ProjectionResult;
   bestScenario: ProjectionResult | null;
+  scenario: Scenario;
 }) {
   const { summary } = projection;
   return (
@@ -257,9 +291,12 @@ function SummaryCards({
         <small>{formatCurrency(summary.retirementBalanceToday)} today</small>
       </article>
       <article className="kpi-card teal">
-        <span>Monthly income estimate</span>
+        <span>Withdrawal-rate income</span>
         <strong>{formatCurrency(summary.estimatedMonthlyIncome)}</strong>
-        <small>{summary.monthlyIncomeGap >= 0 ? "Surplus" : "Gap"} {formatCurrency(Math.abs(summary.monthlyIncomeGap))}</small>
+        <small>
+          {formatPercent(scenario.withdrawalRate)} estimate; {summary.monthlyIncomeGap >= 0 ? "surplus" : "gap"}{" "}
+          {formatCurrency(Math.abs(summary.monthlyIncomeGap))}
+        </small>
       </article>
       <article className="kpi-card">
         <span>Total contributions</span>
@@ -486,11 +523,11 @@ export default function App() {
 
         <section className="hero-strip" aria-label="Meeting summary">
           <div>
-            <p className="eyebrow">Live advisor meeting tool</p>
+            <p className="eyebrow">Live advisor meeting tool - Version 2</p>
             <h1>{client.displayName || "Anonymous Client"} retirement projection</h1>
             <p>
-              Local-only deterministic projection using annual spending, Social Security offset, scenario comparison,
-              and {dollarMode === "future" ? " future-dollar" : " today's-dollar"} values.
+              Local-only deterministic projection: contributions stop at retirement, annual spending drives drawdown,
+              and withdrawal rate estimates monthly income in {dollarMode === "future" ? "future" : "today's"} dollars.
             </p>
           </div>
           <div className="hero-metric">
@@ -526,8 +563,38 @@ export default function App() {
               <div className="two-col">
                 <NumberField label="Current income" value={client.currentAnnualIncome} prefix="$" min={0} onChange={(currentAnnualIncome) => updateClient({ currentAnnualIncome })} />
                 <NumberField label="Desired income" value={client.desiredRetirementIncome} prefix="$" min={0} onChange={(desiredRetirementIncome) => updateClient({ desiredRetirementIncome })} />
-                <NumberField label="Annual spending" value={selectedScenario.retirementAnnualSpending} prefix="$" min={0} onChange={(retirementAnnualSpending) => updateSelectedScenario({ retirementAnnualSpending })} />
-                <NumberField label="Withdrawal rate" value={selectedScenario.withdrawalRate} suffix="%" min={0} step={0.1} onChange={(withdrawalRate) => updateSelectedScenario({ withdrawalRate })} />
+              </div>
+              <div className="cashflow-group" aria-label="Retirement cash flow controls">
+                <div className="cashflow-head">
+                  <div>
+                    <p className="eyebrow">Retirement cash flow</p>
+                    <h3>Drawdown inputs</h3>
+                  </div>
+                  <span>Contributions stop at age {selectedScenario.retirementAge}</span>
+                </div>
+                <div className="cashflow-controls">
+                  <div className="model-control-card">
+                    <NumberField
+                      label="Annual spending drawdown"
+                      value={selectedScenario.retirementAnnualSpending}
+                      prefix="$"
+                      min={0}
+                      description="Feeds post-retirement withdrawals and depletion."
+                      onChange={(retirementAnnualSpending) => updateSelectedScenario({ retirementAnnualSpending })}
+                    />
+                  </div>
+                  <div className="model-control-card estimate">
+                    <NumberField
+                      label="Withdrawal-rate income estimate"
+                      value={selectedScenario.withdrawalRate}
+                      suffix="%"
+                      min={0}
+                      step={0.1}
+                      description="Estimates monthly income; it does not change drawdown."
+                      onChange={(withdrawalRate) => updateSelectedScenario({ withdrawalRate })}
+                    />
+                  </div>
+                </div>
               </div>
               <Toggle
                 label="Inflation-adjust retirement spending"
@@ -574,7 +641,7 @@ export default function App() {
           </aside>
 
           <section className="main-stage">
-            <SummaryCards projection={selectedProjection} bestScenario={bestScenario} />
+            <SummaryCards projection={selectedProjection} bestScenario={bestScenario} scenario={selectedScenario} />
             <div className="mode-toggle" role="group" aria-label="Dollar display mode">
               <button className={dollarMode === "future" ? "active" : ""} type="button" onClick={() => setDollarMode("future")}>
                 Future dollars
@@ -592,6 +659,10 @@ export default function App() {
                   <strong>{formatCurrency(selectedScenario.retirementAnnualSpending)}</strong>
                 </div>
                 <div>
+                  <span>Withdrawal-rate income</span>
+                  <strong>{formatCurrency(selectedProjection.summary.estimatedMonthlyIncome)}</strong>
+                </div>
+                <div>
                   <span>Social Security offset</span>
                   <strong>{formatCurrency(selectedLastPoint.socialSecurityIncome)}</strong>
                 </div>
@@ -602,6 +673,10 @@ export default function App() {
                 <div>
                   <span>Remaining at end</span>
                   <strong>{formatCurrency(selectedProjection.summary.remainingBalanceAtEnd)}</strong>
+                </div>
+                <div>
+                  <span>Contribution phase</span>
+                  <strong>Stops at age {selectedScenario.retirementAge}</strong>
                 </div>
               </div>
             </section>
