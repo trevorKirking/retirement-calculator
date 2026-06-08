@@ -15,6 +15,7 @@ describe("Retirement dashboard app", () => {
     expect(screen.getAllByText(/Increase Contributions/i)[0]).toBeInTheDocument();
     expect(screen.getAllByText(/Retire Later/i)[0]).toBeInTheDocument();
     expect(screen.getByLabelText("Retirement cash flow controls")).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Annual spending input mode" })).toBeInTheDocument();
     expect(screen.getAllByText(/withdrawal-rate income/i)[0]).toBeInTheDocument();
     expect(screen.getByText(/contributions stop at age 67/i)).toBeInTheDocument();
   });
@@ -30,6 +31,20 @@ describe("Retirement dashboard app", () => {
     await user.clear(scenarioName);
     await user.type(scenarioName, "Client Conservative Case");
     expect(screen.getAllByText("Client Conservative Case")[0]).toBeInTheDocument();
+  });
+
+  it("switches annual spending between dollar and percent entry", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "Percent" }));
+
+    expect(await screen.findByLabelText(/Annual spending \(% of current income\)/i)).toHaveValue(60.5634);
+    expect(screen.getByText(/effective \$86,000 per year/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Dollars" }));
+
+    expect(screen.getByLabelText(/Annual spending drawdown/i)).toHaveValue(86000);
   });
 
   it("shows validation feedback for invalid ages", async () => {

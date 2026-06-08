@@ -27,7 +27,14 @@ import {
   projectScenario,
   validateScenario
 } from "./domain/projection";
-import type { Account, ClientProfile, DollarMode, ProjectionResult, Scenario } from "./domain/types";
+import type {
+  Account,
+  ClientProfile,
+  DollarMode,
+  ProjectionResult,
+  RetirementSpendingMode,
+  Scenario
+} from "./domain/types";
 
 const accountTypes: Account["type"][] = [
   "401(k)",
@@ -433,12 +440,23 @@ export default function App() {
   const [dollarMode, setDollarMode] = useState<DollarMode>("future");
 
   const selectedScenario = scenarios.find((scenario) => scenario.id === selectedScenarioId) ?? scenarios[0];
-  const projections = useMemo(() => scenarios.map((scenario) => projectScenario(scenario)), [scenarios]);
+  const projections = useMemo(
+    () => scenarios.map((scenario) => projectScenario(scenario, { currentAnnualIncome: client.currentAnnualIncome })),
+    [scenarios, client.currentAnnualIncome]
+  );
   const selectedProjection =
     projections.find((projection) => projection.scenarioId === selectedScenario.id) ?? projections[0];
   const bestScenario = useMemo(() => compareBestScenario(projections), [projections]);
   const validation = validateScenario(selectedScenario);
   const selectedLastPoint = selectedProjection.points[selectedProjection.points.length - 1];
+  const effectiveAnnualSpending = selectedProjection.summary.annualSpending;
+  const spendingModeIsPercent = selectedScenario.retirementSpendingMode === "percentOfIncome";
+  const spendingInputLabel = spendingModeIsPercent
+    ? "Annual spending (% of current income)"
+    : "Annual spending drawdown";
+  const spendingInputValue = spendingModeIsPercent
+    ? selectedScenario.retirementSpendingPercentOfIncome
+    : selectedScenario.retirementAnnualSpending;
 
   function updateClient(patch: Partial<ClientProfile>) {
     setClient((current) => ({ ...current, ...patch }));
@@ -448,6 +466,33 @@ export default function App() {
     setScenarios((current) =>
       current.map((scenario) => (scenario.id === selectedScenario.id ? { ...scenario, ...patch } : scenario))
     );
+  }
+
+  function updateRetirementSpendingMode(retirementSpendingMode: RetirementSpendingMode) {
+    if (retirementSpendingMode === selectedScenario.retirementSpendingMode) return;
+
+    if (retirementSpendingMode === "percentOfIncome") {
+      const retirementSpendingPercentOfIncome =
+        client.currentAnnualIncome > 0
+          ? Math.round((effectiveAnnualSpending / client.currentAnnualIncome) * 1000000) / 10000
+          : 0;
+      updateSelectedScenario({ retirementSpendingMode, retirementSpendingPercentOfIncome });
+      return;
+    }
+
+    updateSelectedScenario({
+      retirementSpendingMode,
+      retirementAnnualSpending: Math.round(effectiveAnnualSpending)
+    });
+  }
+
+  function updateRetirementSpendingValue(value: number) {
+    if (spendingModeIsPercent) {
+      updateSelectedScenario({ retirementSpendingPercentOfIncome: value });
+      return;
+    }
+
+    updateSelectedScenario({ retirementAnnualSpending: value });
   }
 
   function updateAccount(accountId: string, patch: Partial<Account>) {
@@ -574,13 +619,35 @@ export default function App() {
                 </div>
                 <div className="cashflow-controls">
                   <div className="model-control-card">
+                    <div className="spending-mode-control" role="group" aria-label="Annual spending input mode">
+                      <button
+                        className={!spendingModeIsPercent ? "active" : ""}
+                        type="button"
+                        onClick={() => updateRetirementSpendingMode("dollars")}
+                      >
+                        Dollars
+                      </button>
+                      <button
+                        className={spendingModeIsPercent ? "active" : ""}
+                        type="button"
+                        onClick={() => updateRetirementSpendingMode("percentOfIncome")}
+                      >
+                        Percent
+                      </button>
+                    </div>
                     <NumberField
-                      label="Annual spending drawdown"
-                      value={selectedScenario.retirementAnnualSpending}
-                      prefix="$"
+                      label={spendingInputLabel}
+                      value={spendingInputValue}
+                      prefix={spendingModeIsPercent ? undefined : "$"}
+                      suffix={spendingModeIsPercent ? "%" : undefined}
                       min={0}
-                      description="Feeds post-retirement withdrawals and depletion."
-                      onChange={(retirementAnnualSpending) => updateSelectedScenario({ retirementAnnualSpending })}
+                      step={spendingModeIsPercent ? 0.01 : 1}
+                      description={
+                        spendingModeIsPercent
+                          ? `Uses current income; effective ${formatCurrency(effectiveAnnualSpending)} per year.`
+                          : "Feeds post-retirement withdrawals and depletion."
+                      }
+                      onChange={updateRetirementSpendingValue}
                     />
                   </div>
                   <div className="model-control-card estimate">
@@ -655,8 +722,8 @@ export default function App() {
               <p className="eyebrow">Selected scenario detail</p>
               <div className="detail-grid">
                 <div>
-                  <span>Annual spending</span>
-                  <strong>{formatCurrency(selectedScenario.retirementAnnualSpending)}</strong>
+                  <span>{spendingModeIsPercent ? "Annual spending (% mode)" : "Annual spending"}</span>
+                  <strong>{formatCurrency(effectiveAnnualSpending)}</strong>
                 </div>
                 <div>
                   <span>Withdrawal-rate income</span>
@@ -778,7 +845,7 @@ export default function App() {
         <div className="print-grid">
           <div><span>Selected scenario</span><strong>{selectedScenario.name}</strong></div>
           <div><span>Retirement age</span><strong>{selectedScenario.retirementAge}</strong></div>
-          <div><span>Annual spending</span><strong>{formatCurrency(selectedScenario.retirementAnnualSpending)}</strong></div>
+          <div><span>Annual spending</span><strong>{formatCurrency(effectiveAnnualSpending)}</strong></div>
           <div><span>Social Security</span><strong>{selectedScenario.socialSecurityEnabled ? formatCurrency(selectedScenario.socialSecurityMonthlyBenefit, 0) : "Excluded"}</strong></div>
           <div><span>Retirement balance</span><strong>{formatCurrency(selectedProjection.summary.retirementBalance)}</strong></div>
           <div><span>Depletion result</span><strong>{selectedProjection.summary.depletionAge ? `Age ${selectedProjection.summary.depletionAge}` : "No depletion"}</strong></div>

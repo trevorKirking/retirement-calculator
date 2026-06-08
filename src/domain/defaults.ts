@@ -25,6 +25,9 @@ export const defaultClient: ClientProfile = {
   desiredRetirementIncome: 86000
 };
 
+const defaultBaseSpendingPercent = 60.5634;
+const defaultLaterSpendingPercent = 57.7465;
+
 export const defaultAccounts: Account[] = [
   {
     id: "acct-401k",
@@ -77,6 +80,8 @@ export const defaultScenarios: Scenario[] = [
     defaultAnnualReturn: 6.25,
     withdrawalRate: 4,
     retirementAnnualSpending: 86000,
+    retirementSpendingMode: "dollars",
+    retirementSpendingPercentOfIncome: defaultBaseSpendingPercent,
     retirementSpendingInflationAdjusted: true,
     socialSecurityEnabled: true,
     socialSecurityMonthlyBenefit: 2100,
@@ -96,6 +101,8 @@ export const defaultScenarios: Scenario[] = [
     defaultAnnualReturn: 6.25,
     withdrawalRate: 4,
     retirementAnnualSpending: 86000,
+    retirementSpendingMode: "dollars",
+    retirementSpendingPercentOfIncome: defaultBaseSpendingPercent,
     retirementSpendingInflationAdjusted: true,
     socialSecurityEnabled: true,
     socialSecurityMonthlyBenefit: 2100,
@@ -119,6 +126,8 @@ export const defaultScenarios: Scenario[] = [
     defaultAnnualReturn: 6.25,
     withdrawalRate: 4,
     retirementAnnualSpending: 82000,
+    retirementSpendingMode: "dollars",
+    retirementSpendingPercentOfIncome: defaultLaterSpendingPercent,
     retirementSpendingInflationAdjusted: true,
     socialSecurityEnabled: true,
     socialSecurityMonthlyBenefit: 2400,

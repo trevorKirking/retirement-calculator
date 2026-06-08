@@ -424,6 +424,29 @@ h2 {
   gap: 8px;
 }
 
+.spending-mode-control {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.spending-mode-control button {
+  min-height: 34px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.spending-mode-control button.active {
+  border-color: var(--bronze-d);
+  background: var(--bronze);
+  color: #fff;
+}
+
 .model-control-card {
   border: 1px solid var(--rule-soft);
   border-top: 3px solid var(--bronze);

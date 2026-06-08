@@ -118,6 +118,36 @@ describe("projection engine", () => {
     expect(higherRate.summary.remainingBalanceAtEnd).toBe(lowerRate.summary.remainingBalanceAtEnd);
   });
 
+  it("uses percent of current income for retirement spending when selected", () => {
+    const result = projectScenario(
+      scenarioWith({
+        currentAge: 64,
+        retirementAge: 65,
+        projectionEndAge: 66,
+        retirementAnnualSpending: 999999,
+        retirementSpendingMode: "percentOfIncome",
+        retirementSpendingPercentOfIncome: 50,
+        retirementSpendingInflationAdjusted: false,
+        socialSecurityEnabled: false,
+        accounts: [
+          {
+            ...defaultScenarios[0].accounts[0],
+            currentBalance: 100000,
+            monthlyContribution: 0,
+            annualReturn: 0,
+            employerMatchEnabled: false
+          }
+        ]
+      }),
+      { currentAnnualIncome: 120000 }
+    );
+
+    const finalPoint = result.points[result.points.length - 1];
+
+    expect(result.summary.annualSpending).toBe(60000);
+    expect(finalPoint.annualSpending).toBeCloseTo(60000, 0);
+  });
+
   it("calculates today's dollars below future dollars when inflation is positive", () => {
     const result = projectScenario(scenarioWith({ inflationRate: 3 }));
     const finalPoint = result.points[result.points.length - 1];
@@ -129,5 +159,16 @@ describe("projection engine", () => {
     expect(validateScenario(scenarioWith({ currentAge: 70, retirementAge: 65 }))).toContain(
       "Current age must be less than retirement age."
     );
+  });
+
+  it("validates negative percent spending", () => {
+    expect(
+      validateScenario(
+        scenarioWith({
+          retirementSpendingMode: "percentOfIncome",
+          retirementSpendingPercentOfIncome: -1
+        })
+      )
+    ).toContain("Annual retirement spending percentage must be zero or greater.");
   });
 });

@@ -10,6 +10,9 @@ test("advisor can view dashboard, change mode, duplicate scenario, and verify pr
   await page.getByRole("button", { name: "Today's dollars" }).click();
   await expect(page.getByText("Today's dollars").first()).toBeVisible();
 
+  await page.getByRole("button", { name: "Percent" }).click();
+  await expect(page.getByLabel(/Annual spending \(% of current income\)/i)).toHaveValue("60.5634");
+
   await page.getByRole("button", { name: "Duplicate selected scenario" }).click();
   await expect(page.getByLabel("Scenario name")).toHaveValue(/Copy/);
 

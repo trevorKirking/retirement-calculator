@@ -1,4 +1,5 @@
 export type DollarMode = "future" | "today";
+export type RetirementSpendingMode = "dollars" | "percentOfIncome";
 
 export type AccountType =
   | "401(k)"
@@ -40,6 +41,8 @@ export interface Scenario {
   defaultAnnualReturn: number;
   withdrawalRate: number;
   retirementAnnualSpending: number;
+  retirementSpendingMode: RetirementSpendingMode;
+  retirementSpendingPercentOfIncome: number;
   retirementSpendingInflationAdjusted: boolean;
   socialSecurityEnabled: boolean;
   socialSecurityMonthlyBenefit: number;

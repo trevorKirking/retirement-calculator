@@ -2,6 +2,11 @@ import type { Account, ProjectionPoint, ProjectionResult, Scenario } from "./typ
 
 export const DEFAULT_START_YEAR = 2026;
 
+export interface ProjectionOptions {
+  startYear?: number;
+  currentAnnualIncome?: number;
+}
+
 interface AccountState {
   account: Account;
   balance: number;
@@ -39,6 +44,14 @@ function inflate(value: number, ratePercent: number, years: number): number {
 
 function toTodayDollars(value: number, inflationRate: number, yearsElapsed: number): number {
   return value / Math.pow(1 + inflationRate / 100, Math.max(0, yearsElapsed));
+}
+
+export function resolveRetirementAnnualSpending(scenario: Scenario, currentAnnualIncome = 0): number {
+  if (scenario.retirementSpendingMode === "percentOfIncome") {
+    return Math.max(0, currentAnnualIncome) * (Math.max(0, scenario.retirementSpendingPercentOfIncome) / 100);
+  }
+
+  return Math.max(0, scenario.retirementAnnualSpending);
 }
 
 function buildPoint(args: {
@@ -96,7 +109,16 @@ function buildPoint(args: {
   };
 }
 
-export function projectScenario(scenario: Scenario, startYear = DEFAULT_START_YEAR): ProjectionResult {
+export function projectScenario(
+  scenario: Scenario,
+  optionsOrStartYear: ProjectionOptions | number = DEFAULT_START_YEAR
+): ProjectionResult {
+  const startYear = typeof optionsOrStartYear === "number"
+    ? optionsOrStartYear
+    : optionsOrStartYear.startYear ?? DEFAULT_START_YEAR;
+  const currentAnnualIncome =
+    typeof optionsOrStartYear === "number" ? 0 : optionsOrStartYear.currentAnnualIncome ?? 0;
+  const baseAnnualSpending = resolveRetirementAnnualSpending(scenario, currentAnnualIncome);
   const states: AccountState[] = scenario.accounts.map((account) => ({
     account,
     balance: Math.max(0, account.currentBalance),
@@ -158,8 +180,8 @@ export function projectScenario(scenario: Scenario, startYear = DEFAULT_START_YE
 
       const yearsRetired = Math.max(0, Math.floor(age - scenario.retirementAge));
       const annualSpending = scenario.retirementSpendingInflationAdjusted
-        ? inflate(scenario.retirementAnnualSpending, scenario.inflationRate, yearsRetired)
-        : scenario.retirementAnnualSpending;
+        ? inflate(baseAnnualSpending, scenario.inflationRate, yearsRetired)
+        : baseAnnualSpending;
       const monthlySpending = Math.max(0, annualSpending / 12);
       const socialSecurityYears = Math.max(0, Math.floor(age - scenario.socialSecurityStartAge));
       const monthlySocialSecurity =
@@ -214,7 +236,7 @@ export function projectScenario(scenario: Scenario, startYear = DEFAULT_START_YE
     (scenario.socialSecurityEnabled && scenario.socialSecurityStartAge <= scenario.retirementAge
       ? scenario.socialSecurityMonthlyBenefit
       : 0);
-  const targetMonthlyIncome = scenario.retirementAnnualSpending / 12;
+  const targetMonthlyIncome = baseAnnualSpending / 12;
 
   return {
     scenarioId: scenario.id,
@@ -229,7 +251,7 @@ export function projectScenario(scenario: Scenario, startYear = DEFAULT_START_YE
       investmentGrowthAtRetirement: retirementPoint.investmentGrowth,
       estimatedMonthlyIncome,
       monthlyIncomeGap: estimatedMonthlyIncome - targetMonthlyIncome,
-      annualSpending: scenario.retirementAnnualSpending,
+      annualSpending: baseAnnualSpending,
       depletionAge,
       depletionYear,
       yearsFunded:
@@ -249,8 +271,11 @@ export function validateScenario(scenario: Scenario): string[] {
   if (scenario.retirementAge >= scenario.projectionEndAge) {
     errors.push("Retirement age must be less than projection end age.");
   }
-  if (scenario.retirementAnnualSpending < 0) {
+  if (scenario.retirementSpendingMode === "dollars" && scenario.retirementAnnualSpending < 0) {
     errors.push("Annual retirement spending must be zero or greater.");
+  }
+  if (scenario.retirementSpendingMode === "percentOfIncome" && scenario.retirementSpendingPercentOfIncome < 0) {
+    errors.push("Annual retirement spending percentage must be zero or greater.");
   }
   if (scenario.accounts.length === 0) {
     errors.push("Add at least one account to calculate a projection.");
