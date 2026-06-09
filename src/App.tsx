@@ -645,7 +645,7 @@ export default function App() {
                       description={
                         spendingModeIsPercent
                           ? `Uses current income; effective ${formatCurrency(effectiveAnnualSpending)} per year.`
-                          : "Feeds post-retirement withdrawals and depletion."
+                          : "Starts after the retirement balance point; feeds depletion and ending balance."
                       }
                       onChange={updateRetirementSpendingValue}
                     />

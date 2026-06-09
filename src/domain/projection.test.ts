@@ -118,6 +118,31 @@ describe("projection engine", () => {
     expect(higherRate.summary.remainingBalanceAtEnd).toBe(lowerRate.summary.remainingBalanceAtEnd);
   });
 
+  it("keeps annual spending drawdown separate from retirement balance", () => {
+    const baseline = scenarioWith({
+      currentAge: 64,
+      retirementAge: 65,
+      projectionEndAge: 66,
+      retirementAnnualSpending: 0,
+      socialSecurityEnabled: false,
+      accounts: [
+        {
+          ...defaultScenarios[0].accounts[0],
+          currentBalance: 100000,
+          monthlyContribution: 0,
+          annualReturn: 0,
+          employerMatchEnabled: false
+        }
+      ]
+    });
+    const noDrawdown = projectScenario(baseline);
+    const highDrawdown = projectScenario({ ...baseline, retirementAnnualSpending: 60000 });
+
+    expect(highDrawdown.summary.retirementBalance).toBe(noDrawdown.summary.retirementBalance);
+    expect(highDrawdown.summary.retirementBalance).toBeCloseTo(100000, 0);
+    expect(highDrawdown.summary.remainingBalanceAtEnd).toBeLessThan(noDrawdown.summary.remainingBalanceAtEnd);
+  });
+
   it("uses percent of current income for retirement spending when selected", () => {
     const result = projectScenario(
       scenarioWith({

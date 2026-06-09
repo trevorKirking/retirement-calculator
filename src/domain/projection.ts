@@ -132,6 +132,7 @@ export function projectScenario(
   let totalWithdrawals = 0;
   let depletionAge: number | null = null;
   let depletionYear: number | null = null;
+  let retirementBoundaryPoint: ProjectionPoint | null = null;
   let annualSpendingAccumulator = 0;
   let annualWithdrawalAccumulator = 0;
   let annualSocialSecurityAccumulator = 0;
@@ -155,23 +156,43 @@ export function projectScenario(
   );
 
   for (let month = 1; month <= totalMonths; month += 1) {
+    const previousAge = scenario.currentAge + (month - 1) / 12;
     const age = scenario.currentAge + month / 12;
     const yearsElapsed = Math.floor(month / 12);
-    const retired = age >= scenario.retirementAge;
+    const alreadyRetired = previousAge >= scenario.retirementAge;
+    const reachesRetirementThisMonth = previousAge < scenario.retirementAge && age >= scenario.retirementAge;
 
-    if (!retired && month > 1 && (month - 1) % 12 === 0) {
+    if (!alreadyRetired && month > 1 && (month - 1) % 12 === 0) {
       for (const state of states) {
         state.monthlyContribution *= 1 + state.account.annualContributionIncrease / 100;
       }
     }
 
-    if (!retired) {
+    if (!alreadyRetired) {
       for (const state of states) {
         const contribution = state.monthlyContribution;
         const match = employerMatch({ ...state.account, monthlyContribution: contribution });
         state.balance += contribution + match;
         totalContributions += contribution + match;
         state.balance *= 1 + monthlyReturnFromAnnual(state.account.annualReturn);
+      }
+
+      if (reachesRetirementThisMonth && retirementBoundaryPoint === null) {
+        retirementBoundaryPoint = buildPoint({
+          scenario,
+          age: scenario.retirementAge,
+          year: startYear + Math.ceil(month / 12),
+          yearsElapsed: Math.max(0, scenario.retirementAge - scenario.currentAge),
+          balance: currentTotal(states),
+          totalContributions,
+          totalWithdrawals,
+          initialBalance,
+          annualSpending: 0,
+          portfolioWithdrawal: 0,
+          socialSecurityIncome: 0,
+          depletionAge,
+          depletionYear
+        });
       }
     } else {
       for (const state of states) {
@@ -229,7 +250,7 @@ export function projectScenario(
   }
 
   const retirementPoint =
-    points.find((point) => point.age >= scenario.retirementAge) ?? points[points.length - 1];
+    retirementBoundaryPoint ?? points.find((point) => point.age >= scenario.retirementAge) ?? points[points.length - 1];
   const finalPoint = points[points.length - 1];
   const estimatedMonthlyIncome =
     (retirementPoint.totalBalance * (scenario.withdrawalRate / 100)) / 12 +
