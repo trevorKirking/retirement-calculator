@@ -30,3 +30,29 @@ test("mobile viewport has no horizontal overflow", async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   expect(overflow).toBe(false);
 });
+
+test("applying annual return updates account returns and projected ending balance", async ({ page }) => {
+  await page.goto("/");
+
+  const remainingAtEnd = page.locator(".detail-grid > div").filter({ hasText: "Remaining at end" }).locator("strong");
+  const initialRemainingAtEnd = await remainingAtEnd.textContent();
+
+  await page.getByLabel("Apply annual return to accounts").fill("9");
+
+  await expect(page.getByLabel(/^Annual return/i).nth(0)).toHaveValue("9");
+  await expect(page.getByLabel(/^Annual return/i).nth(1)).toHaveValue("9");
+  await expect(page.getByLabel(/^Annual return/i).nth(2)).toHaveValue("9");
+  await expect(remainingAtEnd).not.toHaveText(initialRemainingAtEnd ?? "");
+});
+
+test("individual account annual return changes projected ending balance", async ({ page }) => {
+  await page.goto("/");
+
+  const remainingAtEnd = page.locator(".detail-grid > div").filter({ hasText: "Remaining at end" }).locator("strong");
+  const initialRemainingAtEnd = await remainingAtEnd.textContent();
+
+  await page.getByLabel(/^Annual return/i).first().fill("9");
+
+  await expect(page.getByLabel(/^Annual return/i).first()).toHaveValue("9");
+  await expect(remainingAtEnd).not.toHaveText(initialRemainingAtEnd ?? "");
+});

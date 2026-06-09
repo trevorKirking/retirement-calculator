@@ -503,6 +503,16 @@ export default function App() {
     });
   }
 
+  function updateAllAccountAnnualReturn(defaultAnnualReturn: number) {
+    updateSelectedScenario({
+      defaultAnnualReturn,
+      accounts: selectedScenario.accounts.map((account) => ({
+        ...account,
+        annualReturn: defaultAnnualReturn
+      }))
+    });
+  }
+
   function addAccount() {
     updateSelectedScenario({
       accounts: [
@@ -803,7 +813,7 @@ export default function App() {
                 <span>Scenario name</span>
                 <input value={selectedScenario.name} onChange={(event) => updateSelectedScenario({ name: event.target.value })} />
               </label>
-              <NumberField label="Default annual return" value={selectedScenario.defaultAnnualReturn} suffix="%" min={0} step={0.1} onChange={(defaultAnnualReturn) => updateSelectedScenario({ defaultAnnualReturn })} />
+              <NumberField label="Apply annual return to accounts" value={selectedScenario.defaultAnnualReturn} suffix="%" min={0} step={0.1} onChange={updateAllAccountAnnualReturn} />
             </section>
 
             <section className="panel">

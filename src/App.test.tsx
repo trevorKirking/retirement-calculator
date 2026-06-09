@@ -3,6 +3,10 @@ import userEvent from "@testing-library/user-event";
 import App from "./App";
 
 describe("Retirement dashboard app", () => {
+  function remainingAtEndValue() {
+    return screen.getAllByText("Remaining at end")[0].parentElement?.querySelector("strong");
+  }
+
   it("renders Innovest branding and core dashboard surfaces", () => {
     render(<App />);
 
@@ -45,6 +49,24 @@ describe("Retirement dashboard app", () => {
     await user.click(screen.getByRole("button", { name: "Dollars" }));
 
     expect(screen.getByLabelText(/Annual spending drawdown/i)).toHaveValue(86000);
+  });
+
+  it("applies annual return to account inputs and projection results", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const allAccountAnnualReturn = screen.getByLabelText(/Apply annual return to accounts/i);
+    const accountAnnualReturns = screen.getAllByLabelText(/^Annual return/i);
+    const initialRemainingAtEnd = remainingAtEndValue()?.textContent;
+
+    await user.clear(allAccountAnnualReturn);
+    await user.type(allAccountAnnualReturn, "9");
+
+    expect(allAccountAnnualReturn).toHaveValue(9);
+    for (const accountAnnualReturn of accountAnnualReturns) {
+      expect(accountAnnualReturn).toHaveValue(9);
+    }
+    expect(remainingAtEndValue()).not.toHaveTextContent(initialRemainingAtEnd ?? "");
   });
 
   it("shows validation feedback for invalid ages", async () => {

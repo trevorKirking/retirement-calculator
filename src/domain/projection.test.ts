@@ -15,6 +15,34 @@ describe("projection engine", () => {
     expect(monthlyReturnFromAnnual(12)).toBeCloseTo(Math.pow(1.12, 1 / 12) - 1, 10);
   });
 
+  it("uses account annual return to change projected balances", () => {
+    const baseline = scenarioWith({
+      currentAge: 45,
+      retirementAge: 67,
+      projectionEndAge: 95,
+      retirementAnnualSpending: 0,
+      socialSecurityEnabled: false,
+      accounts: [
+        {
+          ...defaultScenarios[0].accounts[0],
+          currentBalance: 100000,
+          monthlyContribution: 0,
+          annualReturn: 0,
+          employerMatchEnabled: false
+        }
+      ]
+    });
+
+    const noReturn = projectScenario(baseline);
+    const higherReturn = projectScenario({
+      ...baseline,
+      accounts: baseline.accounts.map((account) => ({ ...account, annualReturn: 8 }))
+    });
+
+    expect(higherReturn.summary.retirementBalance).toBeGreaterThan(noReturn.summary.retirementBalance);
+    expect(higherReturn.summary.remainingBalanceAtEnd).toBeGreaterThan(noReturn.summary.remainingBalanceAtEnd);
+  });
+
   it("detects depletion from high retirement spending", () => {
     const result = projectScenario(
       scenarioWith({
