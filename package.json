@@ -9,8 +9,8 @@
     "preview": "vite preview --host 127.0.0.1 --configLoader runner",
     "test": "vitest run --configLoader runner",
     "test:watch": "vitest --configLoader runner",
-    "e2e": "npm.cmd run build && node scripts/run-e2e.mjs",
-    "smoke:browser": "npm.cmd run build && node scripts/browser-smoke.mjs",
+    "e2e": "npm run build && node scripts/run-e2e.mjs",
+    "smoke:browser": "npm run build && node scripts/browser-smoke.mjs",
     "verify:print": "node scripts/verify-print-summary.mjs"
   },
   "dependencies": {
@@ -27,6 +27,7 @@
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
+    "fast-check": "^4.8.0",
     "jsdom": "^25.0.1",
     "typescript": "^5.7.3",
     "vite": "^6.0.7",

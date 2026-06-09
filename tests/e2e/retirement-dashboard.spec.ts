@@ -30,3 +30,22 @@ test("mobile viewport has no horizontal overflow", async ({ page }) => {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
   expect(overflow).toBe(false);
 });
+
+test("annual drawdown changes end balance but not retirement balance", async ({ page }) => {
+  await page.goto("/");
+
+  const retirementBalance = page
+    .locator(".kpi-card")
+    .filter({ hasText: "Retirement balance" })
+    .locator("strong")
+    .first();
+  const remainingAtEnd = page.locator(".detail-grid > div").filter({ hasText: "Remaining at end" }).locator("strong");
+
+  const initialRetirementBalance = await retirementBalance.textContent();
+  const initialRemainingAtEnd = await remainingAtEnd.textContent();
+
+  await page.getByLabel(/Annual spending drawdown/i).fill("130000");
+
+  await expect(retirementBalance).toHaveText(initialRetirementBalance ?? "");
+  await expect(remainingAtEnd).not.toHaveText(initialRemainingAtEnd ?? "");
+});
